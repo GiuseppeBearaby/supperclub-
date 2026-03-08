@@ -1,7 +1,53 @@
 {
-  "events": [],
-  "guests": [],
-  "slots": [],
+  "events": [
+    {
+      "id": "mmhqcq5i563",
+      "nome": "Il Circolo",
+      "data": "2026-03-14",
+      "status": "open",
+      "maxGuests": 8,
+      "pricePerPerson": 375,
+      "guests": [
+        {
+          "gid": "mmhqc0f5peu",
+          "ptype": "full",
+          "cprice": null,
+          "pay": "Ziina",
+          "paid": true
+        }
+      ],
+      "costs": [],
+      "note": "",
+      "ricavi": {
+        "totale": 375,
+        "nOspiti": 1
+      },
+      "costi": {
+        "totale": 0
+      },
+      "savedAt": "2026-03-08T12:30:32.228Z"
+    }
+  ],
+  "guests": [
+    {
+      "id": "mmhqc0f5peu",
+      "name": "Aliya Kalynbayeva",
+      "phone": "+971 58 658 1199",
+      "instagram": "@aliya_oscar",
+      "restrictions": "",
+      "notes": "",
+      "addedAt": "2026-03-08T12:29:36.929Z"
+    }
+  ],
+  "slots": [
+    {
+      "date": "2026-03-14",
+      "status": "open",
+      "maxGuests": 8,
+      "pricePerPerson": 375,
+      "eventId": "mmhqcq5i563"
+    }
+  ],
   "sharedCosts": [],
-  "savedAt": "2026-03-08T12:26:39.852Z"
+  "savedAt": "2026-03-08T12:30:47.398Z"
 }
