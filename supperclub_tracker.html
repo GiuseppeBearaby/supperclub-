@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Supper Club">
+  <title>Supper Club Dubai</title>
+  <style>
+    :root {
+      --bg:#0f0f13; --card:#1a1a24; --card2:#22222f; --card3:#2a2a3a;
+      --accent:#c9a96e; --accent2:#e8c98a;
+      --green:#4ade80; --red:#f87171; --blue:#60a5fa; --purple:#a78bfa; --orange:#fb923c;
+      --text:#f0ede8; --muted:#8a8799; --border:#2e2e3e; --radius:16px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:90px}
+
+    /* HEADER */
+    .header{background:linear-gradient(135deg,#1a1520 0%,#0f0f13 100%);padding:54px 20px 18px;border-bottom:1px solid var(--border)}
+    .header h1{font-size:26px;font-weight:700;letter-spacing:-0.5px}.header h1 span{color:var(--accent)}
+    .header-sub{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+    .header p{color:var(--muted);font-size:13px}
+    .settings-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--muted);font-size:12px;cursor:pointer}
+    .ai-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+    .ai-status.on{background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
+    .ai-status.off{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+
+    /* TABS */
+    .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:50}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{flex:1;min-width:68px;padding:12px 4px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+    /* PAGES */
+    .page{display:none;padding:16px}.page.active{display:block}
+
+    /* CARDS */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+    .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+    .stat.full{grid-column:1/-1}
+    .stat-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    .stat-value{font-size:22px;font-weight:700}
+    .stat-value.green{color:var(--green)}.stat-value.red{color:var(--red)}
+    .stat-value.gold{color:var(--accent)}.stat-value.blue{color:var(--blue)}
+
+    /* FORM */
+    .form-group{margin-bottom:14px}
+    .form-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.5px}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:16px;outline:none;-webkit-appearance:none}
+    .form-textarea{min-height:80px;resize:vertical;font-family:inherit}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+    .form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .section-label{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    /* COST ITEMS */
+    .cost-item{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+    .cost-item .form-input{flex:1}
+    .cost-item .form-input.narrow{width:100px;flex:none}
+    .cost-item .form-select.cat{width:110px;flex:none;font-size:13px;padding:12px 6px}
+    .remove-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--red);width:36px;height:44px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .add-btn{background:none;border:1px dashed var(--border);border-radius:10px;color:var(--accent);width:100%;padding:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
+
+    /* BUTTONS */
+    .btn-primary{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);color:#0f0f13;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;width:100%;cursor:pointer;margin-top:8px}
+    .btn-primary:active{opacity:.85}
+    .btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
+    .btn-ai{background:linear-gradient(135deg,#1a1a3a 0%,#2a1a3a 100%);color:var(--purple);border:1px solid rgba(167,139,250,.4);border-radius:12px;padding:14px;font-size:15px;font-weight:700;width:100%;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-ai:active{opacity:.85}
+    .btn-delete{background:none;border:1px solid var(--red);color:var(--red);border-radius:10px;padding:12px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:16px}
+    .btn-close{background:var(--card2);border:none;color:var(--muted);border-radius:10px;padding:12px;font-size:14px;font-weight:600;width:100%;cursor:pointer;margin-top:8px}
+
+    /* EVENT LIST */
+    .event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s}
+    .event-card:active{border-color:var(--accent)}
+    .event-top{display:flex;justify-content:space-between;align-items:flex-start}
+    .event-name{font-size:16px;font-weight:700}
+    .event-date{font-size:12px;color:var(--muted);margin-top:2px}
+    .event-profit{font-size:20px;font-weight:700;text-align:right}
+    .event-profit.pos{color:var(--green)}.event-profit.neg{color:var(--red)}
+    .event-details{display:flex;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+    .event-detail{flex:1}
+    .event-detail-label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600}
+    .event-detail-value{font-size:13px;font-weight:600;margin-top:2px}
+    .badge{display:inline-block;background:var(--card2);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-top:6px}
+    .badge.pos{color:var(--green)}.badge.neg{color:var(--red)}
+    .badge.blue{color:var(--blue)}.badge.orange{color:var(--orange)}.badge.purple{color:var(--purple)}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:flex-end}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 44px;width:100%;max-height:92vh;overflow-y:auto}
+    .modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+    .modal-title{font-size:22px;font-weight:700;margin-bottom:4px}
+    .modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .modal-section{margin-bottom:16px}
+    .modal-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .modal-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .modal-row:last-child{border-bottom:none}
+    .modal-row .label{color:var(--muted)}
+    .modal-total{display:flex;justify-content:space-between;padding:12px 0;font-size:16px;font-weight:700}
+
+    /* TIPS */
+    .tip{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+    .tip strong{color:var(--accent)}
+
+    /* FILTER BAR */
+    .filter-bar{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+    .filter-btn{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .filter-btn.active{background:var(--accent);color:#0f0f13;border-color:var(--accent)}
+
+    /* SEARCH */
+    .search-wrap{position:relative;margin-bottom:12px}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px}
+    .search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px 12px 40px;color:var(--text);font-size:15px;outline:none}
+    .search-input:focus{border-color:var(--accent)}
+    .search-input::placeholder{color:var(--muted)}
+
+    /* CALENDAR */
+    .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .cal-month{font-size:18px;font-weight:700}
+    .cal-nav{background:none;border:1px solid var(--border);border-radius:8px;color:var(--text);width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:4px 0;text-transform:uppercase}
+    .cal-day{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;transition:all .15s;position:relative;min-height:42px}
+    .cal-day:active{opacity:.7}
+    .cal-day.empty{cursor:default}
+    .cal-day .day-num{font-size:14px;font-weight:600;line-height:1}
+    .cal-day .day-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
+    .cal-day.today{border-color:var(--accent)}
+    .cal-day.today .day-num{color:var(--accent)}
+    .cal-day.open{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
+    .cal-day.open .day-num{color:var(--green)}
+    .cal-day.open .day-dot{background:var(--green)}
+    .cal-day.soldout{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.25)}
+    .cal-day.soldout .day-num{color:var(--red)}
+    .cal-day.soldout .day-dot{background:var(--red)}
+    .cal-day.event-day{background:rgba(201,169,110,.08);border-color:rgba(201,169,110,.3)}
+    .cal-day.event-day .day-num{color:var(--accent)}
+    .cal-day.event-day .day-dot{background:var(--accent)}
+    .cal-day.past{opacity:.4}
+    .cal-day .guest-count{font-size:9px;color:var(--muted);margin-top:1px}
+
+    /* CALENDAR LEGEND */
+    .cal-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+    .legend-dot{width:8px;height:8px;border-radius:2px}
+
+    /* BOOKING SLOTS */
+    .booking-slot{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+    .booking-slot.open{border-color:rgba(74,222,128,.3)}
+    .booking-slot.soldout{border-color:rgba(248,113,113,.3)}
+    .booking-slot-top{display:flex;justify-content:space-between;align-items:center}
+    .booking-slot-date{font-size:15px;font-weight:700}
+    .booking-slot-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .status-open{background:rgba(74,222,128,.1);color:var(--green)}
+    .status-soldout{background:rgba(248,113,113,.1);color:var(--red)}
+    .status-event{background:rgba(201,169,110,.1);color:var(--accent)}
+    .booking-guests{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+    .guest-chip{background:var(--card3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+    .guest-chip .rest-icon{color:var(--red);font-size:10px}
+
+    /* CONTACTS */
+    .contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px}
+    .contact-card:active{border-color:var(--accent)}
+    .contact-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent) 0%,var(--purple) 100%);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#0f0f13;flex-shrink:0;text-transform:uppercase}
+    .contact-info{flex:1;min-width:0}
+    .contact-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .contact-handle{font-size:12px;color:var(--muted);margin-top:2px}
+    .contact-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+    .tag{display:inline-block;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600}
+    .tag-restriction{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+    .tag-platform{background:rgba(96,165,250,.12);color:var(--blue);border:1px solid rgba(96,165,250,.25)}
+    .tag-event{background:rgba(201,169,110,.12);color:var(--accent);border:1px solid rgba(201,169,110,.25)}
+
+    /* GUEST SELECTOR */
+    .guest-option{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+    .guest-option.selected{border-color:var(--accent);background:rgba(201,169,110,.07)}
+    .guest-option-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent) 0%,var(--purple) 100%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0f0f13;flex-shrink:0;text-transform:uppercase}
+    .guest-option-info{flex:1}
+    .guest-option-name{font-size:14px;font-weight:600}
+    .guest-option-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .guest-check{font-size:18px;color:var(--accent);display:none}
+    .guest-option.selected .guest-check{display:block}
+
+    /* AI SCANNER */
+    .ai-panel{background:linear-gradient(135deg,#12101a 0%,#1a1228 100%);border:1px solid rgba(167,139,250,.25);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+    .ai-panel-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .ai-result{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:10px}
+    .ai-result-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+    .ai-result-row:last-child{border-bottom:none}
+    .ai-result-label{color:var(--muted)}
+    .ai-thinking{text-align:center;padding:20px;color:var(--purple);font-size:14px}
+    .ai-thinking span{animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    /* UPLOAD ZONE */
+    .upload-zone{border:2px dashed rgba(167,139,250,.3);border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:rgba(167,139,250,.04);margin-bottom:10px}
+    .upload-zone:active{background:rgba(167,139,250,.1)}
+    .upload-zone-icon{font-size:32px;margin-bottom:8px}
+    .upload-zone-text{font-size:13px;color:var(--muted)}
+    .upload-zone-text strong{color:var(--purple)}
+    .upload-preview{width:100%;border-radius:10px;margin-top:10px;max-height:200px;object-fit:cover}
+
+    /* CATEGORY CHIPS */
+    .cat-chart{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .cat-row{display:flex;align-items:center;gap:10px}
+    .cat-label{width:110px;font-size:12px;color:var(--muted);flex-shrink:0}
+    .cat-bar-wrap{flex:1;background:var(--card2);border-radius:4px;height:8px;overflow:hidden}
+    .cat-bar{height:100%;border-radius:4px;transition:width .5s}
+    .cat-amount{font-size:12px;font-weight:600;color:var(--text);width:60px;text-align:right;flex-shrink:0}
+
+    /* CHART */
+    .chart-wrap{overflow-x:auto;padding-bottom:4px}
+    .chart{display:flex;align-items:flex-end;gap:8px;min-height:110px;padding:0 4px}
+    .bar-group{display:flex;flex-direction:column;align-items:center;flex:1;min-width:44px}
+    .bar-label{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;word-break:break-word;max-width:50px;line-height:1.2}
+    .bar{width:100%;border-radius:6px 6px 0 0;min-height:4px}
+    .bar.profit-bar{background:var(--green)}.bar.loss-bar{background:var(--red)}
+    .chart-value{font-size:10px;color:var(--muted);margin-bottom:2px}
+
+    /* EMPTY */
+    .empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+    .empty-state .icon{font-size:44px;margin-bottom:12px}
+    .empty-state p{font-size:14px;line-height:1.5}
+
+    /* SETTINGS MODAL */
+    .settings-section{margin-bottom:20px}
+    .settings-section h3{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+    .api-key-input{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;width:100%;outline:none;font-family:monospace}
+    .api-key-input:focus{border-color:var(--purple)}
+
+    /* AI CHAT */
+    #page-ai{display:none;flex-direction:column;padding:0;height:calc(100vh - 110px)}
+    #page-ai.active{display:flex}
+    .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:4px}
+    .chat-bubble{max-width:82%;padding:12px 14px;border-radius:18px;font-size:14px;line-height:1.5;word-break:break-word}
+    .chat-bubble.user{background:var(--accent);color:#0f0f13;border-radius:18px 18px 4px 18px;align-self:flex-end;font-weight:500}
+    .chat-bubble.ai{background:var(--card);border:1px solid var(--border);border-radius:18px 18px 18px 4px;align-self:flex-start;color:var(--text)}
+    .chat-bubble.ai.thinking{color:var(--muted);font-style:italic}
+    .chat-bubble.system{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:12px;align-self:center;text-align:center;font-size:12px;color:var(--purple);max-width:90%}
+    .chat-bubble.action{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:12px;align-self:stretch;font-size:13px;color:var(--green);max-width:100%}
+    .chat-bubble img{max-width:100%;border-radius:8px;margin-top:6px;display:block}
+    .chat-time{font-size:10px;opacity:.5;margin-top:4px;text-align:right}
+    .chat-input-area{padding:12px 16px;background:var(--card);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+    .chat-quick-btns{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+    .chat-quick-btns::-webkit-scrollbar{display:none}
+    .quick-btn{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+    .quick-btn:active{background:var(--accent);color:#0f0f13;border-color:var(--accent)}
+    .chat-row{display:flex;gap:8px;align-items:flex-end}
+    .chat-input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:22px;padding:12px 16px;color:var(--text);font-size:15px;outline:none;resize:none;max-height:100px;font-family:inherit;line-height:1.4}
+    .chat-input:focus{border-color:var(--accent)}
+    .chat-input::placeholder{color:var(--muted)}
+    .chat-send-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#0f0f13}
+    .chat-send-btn:active{opacity:.8}
+    .chat-attach-btn{background:var(--card2);border:1px solid var(--border);border-radius:50%;width:44px;height:44px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted)}
+    .action-card{background:var(--card2);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:12px;margin-top:6px}
+    .action-card-title{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
+    .action-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .action-confirm-btn{background:var(--green);color:#0f0f13;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}
+    .action-edit-btn{background:var(--card3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
+    .action-deny-btn{background:none;color:var(--red);border:1px solid rgba(248,113,113,.3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍽️ <span>Supper Club</span> <small style="font-size:14px;color:var(--muted);font-weight:400">Dubai</small></h1>
+  <div class="header-sub">
+    <p id="ai-badge" class="ai-status off">● AI Off</p>
+    <button class="settings-btn" onclick="openSettings()">⚙️ Impostazioni</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPage('dashboard')">📊 Home</div>
+  <div class="tab" onclick="showPage('calendario')">📅 Cal</div>
+  <div class="tab" onclick="showPage('nuova')">➕ Serata</div>
+  <div class="tab" onclick="showPage('storico')">📋 Storico</div>
+  <div class="tab" onclick="showPage('contatti')">👥 Ospiti</div>
+  <div class="tab" onclick="showPage('ai')">🤖 AI</div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="page-dashboard" class="page active">
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-label">Ricavi Totali</div><div class="stat-value gold" id="s-ricavi">AED 0</div></div>
+    <div class="stat"><div class="stat-label">Costi Totali</div><div class="stat-value" id="s-costi">AED 0</div></div>
+    <div class="stat"><div class="stat-label">Profitto Netto</div><div class="stat-value green" id="s-profitto">AED 0</div></div>
+    <div class="stat"><div class="stat-label">Margine Medio</div><div class="stat-value gold" id="s-margine">–</div></div>
+    <div class="stat"><div class="stat-label">Serate</div><div class="stat-value gold" id="s-serate">0</div></div>
+    <div class="stat"><div class="stat-label">Ospiti Rubrica</div><div class="stat-value blue" id="s-contatti">0</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Profitto per Serata (AED)</div>
+    <div class="chart-wrap"><div class="chart" id="dash-chart"></div></div>
+  </div>
+
+  <div class="card" id="cat-card" style="display:none">
+    <div class="card-title">Spese per Categoria</div>
+    <div class="cat-chart" id="cat-chart"></div>
+  </div>
+
+  <div class="card" id="best-card" style="display:none">
+    <div class="card-title">🏆 Migliore Serata</div>
+    <div id="best-info"></div>
+  </div>
+
+  <div class="card" id="top-guests-card" style="display:none">
+    <div class="card-title">⭐ Ospiti Fedeli</div>
+    <div id="top-guests"></div>
+  </div>
+</div>
+
+<!-- ══ CALENDARIO ══ -->
+<div id="page-calendario" class="page">
+
+  <div class="card">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="calNav(-1)">‹</button>
+      <div class="cal-month" id="cal-month-label"></div>
+      <button class="cal-nav" onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Aperta</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Sold out</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Serata</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Chiusa</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <div id="cal-slots-section">
+    <div class="card-title" style="padding:0 4px 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)">Date Questo Mese</div>
+    <div id="cal-slots-list"></div>
+  </div>
+
+  <button class="btn-primary" onclick="openAddSlot()">+ Aggiungi / Gestisci Data</button>
+</div>
+
+<!-- ══ NUOVA SERATA ══ -->
+<div id="page-nuova" class="page">
+  <div class="tip"><strong>💡</strong> Seleziona gli ospiti per vedere automaticamente le loro restrizioni alimentari.</div>
+
+  <!-- AI SCANNER -->
+  <div class="ai-panel">
+    <div class="ai-panel-title">🤖 AI Scanner Scontrino</div>
+    <div class="tip" style="background:transparent;border:none;padding:0;margin-bottom:8px;font-size:12px">Carica una foto o screenshot dello scontrino — l'AI riconosce ingredienti e prezzi in AED.</div>
+    <div class="upload-zone" onclick="triggerUpload()">
+      <div class="upload-zone-icon">📷</div>
+      <div class="upload-zone-text"><strong>Tocca per scattare o caricare</strong><br>Foto, screenshot, PDF</div>
+    </div>
+    <input type="file" id="receipt-input" accept="image/*,application/pdf" style="display:none" onchange="handleReceiptUpload(event)">
+    <img id="receipt-preview" class="upload-preview" style="display:none">
+    <div id="ai-result-area"></div>
+    <button class="btn-ai" id="scan-btn" style="display:none" onclick="scanReceipt()">🤖 Analizza con AI</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Informazioni Serata</div>
+
+    <div class="form-group">
+      <label class="form-label">Nome Serata</label>
+      <input class="form-input" id="f-nome" placeholder="es. Cena Estiva — Luglio" type="text">
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label class="form-label">Data</label>
+        <input class="form-input" id="f-data" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Coperti (max 8)</label>
+        <input class="form-input" id="f-coperti" type="number" min="1" max="8" placeholder="8" oninput="calcPreview()">
+      </div>
+    </div>
+
+    <div class="section-label">👥 Ospiti</div>
+    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px">Selezionati: <strong id="guest-count" style="color:var(--accent)">0</strong> / 8</div>
+    <div id="guest-selector"></div>
+    <div id="restrictions-summary" style="display:none;margin-top:10px"></div>
+
+    <div class="section-label">💰 Ricavi</div>
+    <div class="form-group">
+      <label class="form-label">Quota per Persona (AED)</label>
+      <input class="form-input" id="f-biglietto" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bevande Extra (AED totale)</label>
+      <input class="form-input" id="f-bevande" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Altri Ricavi (AED)</label>
+      <input class="form-input" id="f-altri-ricavi" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+
+    <div class="section-label">🧾 Costi Ingredienti</div>
+    <div id="cost-list"></div>
+    <button class="add-btn" onclick="addCost()">+ Aggiungi voce</button>
+
+    <div class="section-label">👤 Costi Staff & Altro</div>
+    <div class="form-group">
+      <label class="form-label">Staff / Servizio (AED)</label>
+      <input class="form-input" id="f-staff" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Venue / Affitto (AED)</label>
+      <input class="form-input" id="f-affitto" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Altri Costi (AED)</label>
+      <input class="form-input" id="f-altri-costi" type="number" min="0" step="1" placeholder="0" oninput="calcPreview()">
+    </div>
+
+    <div class="section-label">📈 Anteprima P&L</div>
+    <div class="stats-grid" style="margin-bottom:0">
+      <div class="stat"><div class="stat-label">Ricavi</div><div class="stat-value gold" id="prev-ricavi">AED 0</div></div>
+      <div class="stat"><div class="stat-label">Costi</div><div class="stat-value" id="prev-costi">AED 0</div></div>
+      <div class="stat"><div class="stat-label">Costo/Persona</div><div class="stat-value blue" id="prev-cpp">AED 0</div></div>
+      <div class="stat"><div class="stat-label">Profitto</div><div class="stat-value green" id="prev-profitto">AED 0</div></div>
+    </div>
+
+    <button class="btn-primary" onclick="saveEvent()">✓ Salva Serata</button>
+  </div>
+</div>
+
+<!-- ══ STORICO ══ -->
+<div id="page-storico" class="page">
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all',this)">Tutte</button>
+    <button class="filter-btn" onclick="setFilter('profit',this)">✅ Utile</button>
+    <button class="filter-btn" onclick="setFilter('loss',this)">⚠️ Perdita</button>
+  </div>
+  <div id="event-list"></div>
+</div>
+
+<!-- ══ CONTATTI ══ -->
+<div id="page-contatti" class="page">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="contact-search" placeholder="Cerca per nome o handle…" oninput="renderContacts()">
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setContactFilter('all',this)">Tutti</button>
+    <button class="filter-btn" onclick="setContactFilter('vip',this)">⭐ VIP</button>
+    <button class="filter-btn" onclick="setContactFilter('restriction',this)">🚫 Restrizioni</button>
+    <button class="filter-btn" onclick="setContactFilter('ig',this)">📸 Instagram</button>
+  </div>
+  <button class="btn-primary" style="margin-bottom:14px" onclick="openNewContact()">+ Nuovo Ospite</button>
+  <div id="contact-list"></div>
+</div>
+
+<!-- ══ AI CHAT ══ -->
+<div id="page-ai" class="page">
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-input-area">
+    <div class="chat-quick-btns" id="quick-btns">
+      <button class="quick-btn" onclick="quickMsg('Qual è il mio profitto questo mese?')">📊 Profitto mese</button>
+      <button class="quick-btn" onclick="quickMsg('Quali date sono aperte nel calendario?')">📅 Date aperte</button>
+      <button class="quick-btn" onclick="quickMsg('Chi viene alla prossima serata?')">👥 Prossima serata</button>
+      <button class="quick-btn" onclick="quickMsg('Aggiungi un nuovo ospite')">➕ Nuovo ospite</button>
+      <button class="quick-btn" onclick="quickMsg('Fammi un riepilogo di tutte le serate')">📋 Riepilogo</button>
+      <button class="quick-btn" onclick="triggerChatUpload()">📷 Carica screenshot</button>
+    </div>
+    <div class="chat-row">
+      <button class="chat-attach-btn" onclick="triggerChatUpload()">📎</button>
+      <textarea class="chat-input" id="chat-input" placeholder="Scrivi un messaggio o carica uno screenshot…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="chat-send-btn" onclick="sendChat()">↑</button>
+    </div>
+    <input type="file" id="chat-file-input" accept="image/*" style="display:none" onchange="handleChatUpload(event)">
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal"><div class="modal-handle"></div><div id="modal-body"></div></div>
+</div>
+<div class="modal-overlay" id="contact-modal" onclick="closeContactModal(event)">
+  <div class="modal" id="contact-modal-body"></div>
+</div>
+<div class="modal-overlay" id="slot-modal" onclick="closeSlotModal(event)">
+  <div class="modal" id="slot-modal-body"></div>
+</div>
+<div class="modal-overlay" id="settings-modal" onclick="closeSettingsModal(event)">
+  <div class="modal" id="settings-modal-body"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════
+const K = { events:'sc_events_v2', contacts:'sc_contacts_v2', slots:'sc_slots_v1', settings:'sc_settings_v1' };
+const load = k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch(e) { return []; } };
+const loadObj = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch(e) { return {}; } };
+const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+
+let events   = load(K.events);
+let contacts = load(K.contacts);
+let slots    = load(K.slots);   // [{id, date, status:'open'|'soldout'|'closed', guestIds:[], note:''}]
+let settings = loadObj(K.settings); // {openaiKey:''}
+
+// ═══════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════
+const PLATFORMS = [
+  {id:'instagram',label:'Instagram',icon:'📸',prefix:'@'},
+  {id:'tiktok',   label:'TikTok',   icon:'🎵',prefix:'@'},
+  {id:'facebook', label:'Facebook', icon:'👤',prefix:''},
+  {id:'whatsapp', label:'WhatsApp', icon:'💬',prefix:''},
+  {id:'email',    label:'Email',    icon:'✉️', prefix:''},
+  {id:'altro',    label:'Altro',    icon:'🌐',prefix:''},
+];
+const RESTRICTIONS = ['Vegetariano','Vegano','Senza glutine','Senza lattosio','Senza frutta secca','Allergia pesce','Allergia crostacei','Senza uova','Halal','Kosher','Diabetico'];
+const CATEGORIES   = ['🥩 Carne','🐟 Pesce','🥦 Verdure','🍝 Pasta/Cereali','🧀 Latticini','🍷 Vino/Bevande','🧄 Condimenti','🍰 Dolci','🛒 Altro'];
+const CAT_COLORS   = ['#f87171','#60a5fa','#4ade80','#fbbf24','#e879f9','#a78bfa','#fb923c','#f472b6','#8a8799'];
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function aed(v){ return 'AED '+Number(v).toLocaleString('en-AE',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function getNum(id){ return parseFloat(document.getElementById(id).value)||0; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d){
+  if(!d) return '';
+  const [y,m,day]=d.split('-');
+  const mesi=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${parseInt(day)} ${mesi[parseInt(m)-1]} ${y}`;
+}
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function initials(nome){ return (nome||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+const PAGE_IDX = {dashboard:0,calendario:1,nuova:2,storico:3,contatti:4};
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab')[PAGE_IDX[name]].classList.add('active');
+  if(name==='dashboard')  renderDashboard();
+  if(name==='calendario') renderCalendar();
+  if(name==='storico')    renderList();
+  if(name==='nuova')      { renderGuestSelector(); renderCosts(); }
+  if(name==='contatti')   renderContacts();
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+function openSettings(){
+  const mb = document.getElementById('settings-modal-body');
+  mb.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Impostazioni</div>
+    <div class="modal-sub">Configurazione app</div>
+    <div class="settings-section">
+      <h3>🤖 AI — OpenAI API Key</h3>
+      <div class="tip">La chiave viene salvata <strong>solo sul tuo telefono</strong>, non viene mai inviata da nessuna parte tranne OpenAI per analizzare gli scontrini.</div>
+      <input class="api-key-input" id="s-openai-key" type="password" placeholder="sk-…" value="${esc(settings.openaiKey||'')}">
+      <button class="btn-secondary" onclick="testApiKey()" style="margin-top:8px">Verifica chiave</button>
+      <div id="key-test-result" style="margin-top:8px;font-size:13px;color:var(--muted)"></div>
+    </div>
+    <button class="btn-primary" onclick="saveSettings()">✓ Salva Impostazioni</button>
+    <button class="btn-close" onclick="closeSettingsModal()">Chiudi</button>`;
+  document.getElementById('settings-modal').classList.add('open');
+}
+function saveSettings(){
+  settings.openaiKey = (document.getElementById('s-openai-key').value||'').trim();
+  save(K.settings, settings);
+  updateAiBadge();
+  closeSettingsModal();
+}
+async function testApiKey(){
+  const key = document.getElementById('s-openai-key').value.trim();
+  const el = document.getElementById('key-test-result');
+  if(!key){ el.textContent='Inserisci una chiave.'; el.style.color='var(--red)'; return; }
+  el.textContent='Verifica in corso…'; el.style.color='var(--muted)';
+  try {
+    const r = await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}});
+    if(r.ok){ el.textContent='✅ Chiave valida!'; el.style.color='var(--green)'; }
+    else     { el.textContent='❌ Chiave non valida.'; el.style.color='var(--red)'; }
+  } catch(e){ el.textContent='Errore di rete.'; el.style.color='var(--red)'; }
+}
+function updateAiBadge(){
+  const el = document.getElementById('ai-badge');
+  if(settings.openaiKey){ el.textContent='● AI On'; el.className='ai-status on'; }
+  else                   { el.textContent='● AI Off'; el.className='ai-status off'; }
+}
+function closeSettingsModal(ev){
+  if(!ev||ev.target===document.getElementById('settings-modal')) document.getElementById('settings-modal').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════
+// AI SCANNER
+// ═══════════════════════════════════════════════
+let receiptImageBase64 = null;
+
+function triggerUpload(){ document.getElementById('receipt-input').click(); }
+
+function handleReceiptUpload(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    receiptImageBase64 = ev.target.result;
+    const preview = document.getElementById('receipt-preview');
+    if(file.type.startsWith('image/')){
+      preview.src = receiptImageBase64;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+    document.getElementById('scan-btn').style.display = 'flex';
+    document.getElementById('ai-result-area').innerHTML = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function scanReceipt(){
+  if(!settings.openaiKey){
+    alert('Configura la chiave OpenAI nelle Impostazioni prima di usare l\'AI.');
+    openSettings(); return;
+  }
+  if(!receiptImageBase64){ alert('Carica prima uno scontrino.'); return; }
+
+  const area = document.getElementById('ai-result-area');
+  area.innerHTML = `<div class="ai-thinking"><span>🤖 Analizzo lo scontrino…</span></div>`;
+
+  const prompt = `Sei un assistente per un supper club a Dubai. Analizza questo scontrino e restituisci SOLO un oggetto JSON valido con questo formato esatto:
+{
+  "negozio": "nome negozio o supermercato",
+  "data": "data se visibile, altrimenti null",
+  "totale_aed": numero,
+  "voci": [
+    {"nome": "nome ingrediente/prodotto", "categoria": "una di: Carne,Pesce,Verdure,Pasta/Cereali,Latticini,Vino/Bevande,Condimenti,Dolci,Altro", "prezzo_aed": numero, "quantita": "es. 1kg o null"}
+  ]
+}
+Se non riesci a leggere un prezzo metti 0. Rispondi SOLO con il JSON, nessun testo aggiuntivo.`;
+
+  try {
+    const messages = [{
+      role:'user',
+      content:[
+        {type:'text',text:prompt},
+        {type:'image_url',image_url:{url: receiptImageBase64, detail:'high'}}
+      ]
+    }];
+
+    const resp = await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.openaiKey},
+      body: JSON.stringify({model:'gpt-4o',messages,max_tokens:1500})
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error?.message||'Errore API');
+
+    const raw = data.choices[0].message.content.trim().replace(/```json|```/g,'');
+    const result = JSON.parse(raw);
+    showAiResult(result);
+  } catch(e){
+    area.innerHTML=`<div class="ai-result" style="color:var(--red)">❌ Errore: ${esc(e.message)}</div>`;
+  }
+}
+
+function showAiResult(r){
+  const area = document.getElementById('ai-result-area');
+  const rows = (r.voci||[]).map(v=>`
+    <div class="ai-result-row">
+      <span class="ai-result-label">${esc(v.nome)}${v.quantita?' ('+esc(v.quantita)+')':''}<br>
+        <small style="font-size:10px;opacity:.7">${esc(v.categoria)}</small></span>
+      <span style="font-weight:600">${aed(v.prezzo_aed||0)}</span>
+    </div>`).join('');
+  area.innerHTML=`<div class="ai-result">
+    <div style="font-weight:700;margin-bottom:8px;color:var(--accent)">${esc(r.negozio||'Scontrino')}${r.data?' · '+esc(r.data):''}</div>
+    ${rows}
+    <div class="ai-result-row" style="margin-top:8px">
+      <span style="font-weight:700">Totale riconosciuto</span>
+      <span style="font-weight:700;color:var(--accent)">${aed(r.totale_aed||0)}</span>
+    </div>
+    <button class="btn-primary" style="margin-top:12px" onclick='importAiCosts(${JSON.stringify(r)})'>✓ Importa nei Costi</button>
+  </div>`;
+}
+
+function importAiCosts(r){
+  (r.voci||[]).forEach(v=>{
+    if(!v.nome) return;
+    addCost(v.nome, v.prezzo_aed||0, v.categoria||'Altro');
+  });
+  document.getElementById('ai-result-area').innerHTML=`<div style="color:var(--green);font-size:13px;padding:10px">✅ ${(r.voci||[]).length} voci importate!</div>`;
+  // scroll to costs
+  document.getElementById('cost-list').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════
+// COST ITEMS
+// ═══════════════════════════════════════════════
+let costItems = [];
+function addCost(name='', amount='', cat='Altro'){
+  costItems.push({id:Date.now()+Math.random(), name, amount, cat});
+  renderCosts();
+  calcPreview();
+}
+function removeCost(id){ costItems=costItems.filter(c=>c.id!==id); renderCosts(); calcPreview(); }
+function renderCosts(){
+  document.getElementById('cost-list').innerHTML = costItems.map(c=>`
+    <div class="cost-item">
+      <select class="form-select cat" onchange="updateCost(${c.id},'cat',this.value)">
+        ${CATEGORIES.map(cat=>`<option value="${cat.replace(/^.+? /,'')}" ${c.cat===cat.replace(/^.+? /,'')?'selected':''}>${cat}</option>`).join('')}
+      </select>
+      <input class="form-input" placeholder="Voce" value="${esc(c.name)}" oninput="updateCost(${c.id},'name',this.value)">
+      <input class="form-input narrow" type="number" min="0" step="1" placeholder="AED" value="${c.amount}" oninput="updateCost(${c.id},'amount',this.value);calcPreview()">
+      <button class="remove-btn" onclick="removeCost(${c.id})">×</button>
+    </div>`).join('');
+}
+function updateCost(id,field,val){ const c=costItems.find(x=>x.id===id); if(c) c[field]=val; }
+
+// ═══════════════════════════════════════════════
+// GUEST SELECTOR
+// ═══════════════════════════════════════════════
+let selectedGuests = new Set();
+function renderGuestSelector(){
+  const el = document.getElementById('guest-selector');
+  if(contacts.length===0){
+    el.innerHTML=`<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Nessun ospite in rubrica.<br>Aggiungili dalla sezione <strong style="color:var(--accent)">👥 Ospiti</strong>.</div>`;
+    updateGuestCounter(); return;
+  }
+  el.innerHTML = contacts.map(c=>{
+    const sel = selectedGuests.has(c.id);
+    const handles=(c.platforms||[]).map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?pl.icon+' '+(pl.prefix||'')+p.handle:'';}).filter(Boolean).join(' · ');
+    const restTags=(c.restrizioni||[]).map(r=>`<span class="tag tag-restriction">${r}</span>`).join('');
+    return `<div class="guest-option ${sel?'selected':''}" onclick="toggleGuest(${c.id})">
+      <div class="guest-option-avatar">${initials(c.nome)}</div>
+      <div class="guest-option-info">
+        <div class="guest-option-name">${esc(c.nome)}${c.vip?' ⭐':''}</div>
+        <div class="guest-option-sub">${handles||'–'}</div>
+        ${restTags?`<div style="margin-top:3px;display:flex;gap:3px;flex-wrap:wrap">${restTags}</div>`:''}
+      </div>
+      <span class="guest-check">✓</span>
+    </div>`;
+  }).join('');
+  updateGuestCounter();
+  renderRestrSummary();
+}
+function toggleGuest(id){
+  if(selectedGuests.has(id)){ selectedGuests.delete(id); }
+  else { if(selectedGuests.size>=8){alert('Massimo 8 ospiti.');return;} selectedGuests.add(id); }
+  renderGuestSelector();
+}
+function updateGuestCounter(){
+  document.getElementById('guest-count').textContent = selectedGuests.size;
+  if(selectedGuests.size>0) document.getElementById('f-coperti').value = selectedGuests.size;
+  calcPreview();
+}
+function renderRestrSummary(){
+  const el = document.getElementById('restrictions-summary');
+  const allRest = {};
+  selectedGuests.forEach(id=>{
+    const c=contacts.find(x=>x.id===id);
+    if(c&&c.restrizioni) c.restrizioni.forEach(r=>{ allRest[r]=(allRest[r]||[]); allRest[r].push(c.nome); });
+  });
+  const keys = Object.keys(allRest);
+  if(!keys.length){ el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML=`<div class="card" style="background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.2)">
+    <div class="card-title" style="color:var(--red)">🚫 Restrizioni Ospiti</div>
+    ${keys.map(r=>`<div class="modal-row"><span class="label">${esc(allRest[r].join(', '))}</span><span style="color:var(--red)">${esc(r)}</span></div>`).join('')}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// CALC PREVIEW
+// ═══════════════════════════════════════════════
+function calcPreview(){
+  const coperti = parseFloat(document.getElementById('f-coperti').value)||1;
+  const biglietto = getNum('f-biglietto')*coperti;
+  const bevande   = getNum('f-bevande');
+  const altriR    = getNum('f-altri-ricavi');
+  const ricavi    = biglietto+bevande+altriR;
+  const ingr = costItems.reduce((s,c)=>s+(parseFloat(c.amount)||0),0);
+  const staff    = getNum('f-staff');
+  const affitto  = getNum('f-affitto');
+  const altriC   = getNum('f-altri-costi');
+  const costi    = ingr+staff+affitto+altriC;
+  const profitto = ricavi-costi;
+  const cpp      = costi/Math.max(coperti,1);
+  document.getElementById('prev-ricavi').textContent  = aed(ricavi);
+  document.getElementById('prev-costi').textContent   = aed(costi);
+  document.getElementById('prev-cpp').textContent     = aed(Math.round(cpp));
+  const pEl = document.getElementById('prev-profitto');
+  pEl.textContent = aed(profitto);
+  pEl.className = 'stat-value '+(profitto>=0?'green':'red');
+}
+
+// ═══════════════════════════════════════════════
+// SAVE EVENT
+// ═══════════════════════════════════════════════
+function saveEvent(){
+  const nome = document.getElementById('f-nome').value.trim();
+  const data = document.getElementById('f-data').value;
+  if(!nome){ alert('Inserisci il nome della serata'); return; }
+  if(!data){ alert('Inserisci la data'); return; }
+  const guestIds = [...selectedGuests];
+  const coperti = parseFloat(document.getElementById('f-coperti').value)||guestIds.length||0;
+  const biglietto = getNum('f-biglietto')*(coperti||1);
+  const bevande   = getNum('f-bevande');
+  const altriR    = getNum('f-altri-ricavi');
+  const ricavi    = biglietto+bevande+altriR;
+  const ingredienti = costItems.map(c=>({name:c.name,amount:parseFloat(c.amount)||0,cat:c.cat||'Altro'}));
+  const totIngr = ingredienti.reduce((s,c)=>s+c.amount,0);
+  const staff   = getNum('f-staff');
+  const affitto = getNum('f-affitto');
+  const altriC  = getNum('f-altri-costi');
+  const costi   = totIngr+staff+affitto+altriC;
+  const evento  = {
+    id:Date.now(), nome, data, coperti, guestIds,
+    ricavi:{biglietto:getNum('f-biglietto'),bevande,altriR,totale:ricavi},
+    costi:{ingredienti,staff,affitto,altriC,totale:costi},
+    profitto:ricavi-costi,
+    margine:ricavi>0?Math.round(((ricavi-costi)/ricavi)*100):0,
+    cpp:Math.round(costi/Math.max(coperti,1))
+  };
+  events.unshift(evento);
+  save(K.events,events);
+  // Mark slot as sold out if exists
+  const slot = slots.find(s=>s.date===data);
+  if(slot){ slot.status='soldout'; slot.guestIds=guestIds; save(K.slots,slots); }
+  ['f-nome','f-biglietto','f-bevande','f-altri-ricavi','f-staff','f-affitto','f-altri-costi'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-coperti').value='';
+  costItems=[]; selectedGuests=new Set();
+  renderCosts(); calcPreview(); renderGuestSelector();
+  alert('✅ Serata salvata!');
+  showPage('storico');
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard(){
+  const totR=events.reduce((s,e)=>s+e.ricavi.totale,0);
+  const totC=events.reduce((s,e)=>s+e.costi.totale,0);
+  const totP=totR-totC;
+  const avgM=events.length?Math.round(events.reduce((s,e)=>s+e.margine,0)/events.length):null;
+  document.getElementById('s-ricavi').textContent  = aed(totR);
+  document.getElementById('s-costi').textContent   = aed(totC);
+  const pEl=document.getElementById('s-profitto');
+  pEl.textContent=aed(totP); pEl.className='stat-value '+(totP>=0?'green':'red');
+  document.getElementById('s-margine').textContent = avgM!==null?avgM+'%':'–';
+  document.getElementById('s-serate').textContent  = events.length;
+  document.getElementById('s-contatti').textContent= contacts.length;
+  renderDashChart();
+  renderCatChart();
+  // Best
+  if(events.length){
+    const best=[...events].sort((a,b)=>b.profitto-a.profitto)[0];
+    document.getElementById('best-card').style.display='';
+    document.getElementById('best-info').innerHTML=`
+      <div class="event-name">${esc(best.nome)}</div>
+      <div class="event-date">${formatDate(best.data)} · ${best.coperti||'?'} ospiti</div>
+      <div style="margin-top:8px;font-size:22px;font-weight:700;color:var(--green)">${aed(best.profitto)}</div>
+      <div class="badge pos">Margine ${best.margine}%</div>`;
+  }
+  // Top guests
+  const gc={};
+  events.forEach(e=>(e.guestIds||[]).forEach(gid=>gc[gid]=(gc[gid]||0)+1));
+  const top=Object.entries(gc).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  if(top.length){
+    document.getElementById('top-guests-card').style.display='';
+    document.getElementById('top-guests').innerHTML=top.map(([gid,cnt])=>{
+      const c=contacts.find(x=>x.id===parseInt(gid)); if(!c) return '';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div class="contact-avatar" style="width:34px;height:34px;font-size:13px">${initials(c.nome)}</div>
+        <div style="flex:1"><div style="font-weight:600">${esc(c.nome)}${c.vip?' ⭐':''}</div>
+        <div style="font-size:11px;color:var(--muted)">${cnt} ${cnt===1?'serata':'serate'}</div></div>
+      </div>`;
+    }).join('');
+  }
+}
+function renderDashChart(){
+  const el=document.getElementById('dash-chart');
+  const last8=[...events].sort((a,b)=>a.data.localeCompare(b.data)).slice(-8);
+  if(!last8.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px;text-align:center;width:100%">Nessuna serata ancora</div>';return;}
+  const max=Math.max(...last8.map(e=>Math.abs(e.profitto)),1);
+  el.innerHTML=last8.map(e=>{
+    const h=Math.max(Math.round((Math.abs(e.profitto)/max)*100),4);
+    const name=e.nome.length>9?e.nome.substring(0,9)+'…':e.nome;
+    return `<div class="bar-group">
+      <div class="chart-value">${aed(e.profitto)}</div>
+      <div class="bar ${e.profitto>=0?'profit-bar':'loss-bar'}" style="height:${h}px"></div>
+      <div class="bar-label">${esc(name)}</div>
+    </div>`;
+  }).join('');
+}
+function renderCatChart(){
+  const catTotals={};
+  events.forEach(e=>(e.costi.ingredienti||[]).forEach(i=>{ catTotals[i.cat||'Altro']=(catTotals[i.cat||'Altro']||0)+i.amount; }));
+  const entries=Object.entries(catTotals).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){ document.getElementById('cat-card').style.display='none'; return; }
+  document.getElementById('cat-card').style.display='';
+  const max=entries[0][1]||1;
+  document.getElementById('cat-chart').innerHTML=entries.map(([cat,tot],i)=>{
+    const w=Math.round((tot/max)*100);
+    const catFull=CATEGORIES.find(c=>c.includes(cat))||cat;
+    const color=CAT_COLORS[CATEGORIES.findIndex(c=>c.includes(cat))]||CAT_COLORS[8];
+    return `<div class="cat-row">
+      <div class="cat-label">${esc(catFull)}</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:${w}%;background:${color}"></div></div>
+      <div class="cat-amount">${aed(tot)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// STORICO
+// ═══════════════════════════════════════════════
+let currentFilter='all';
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('#page-storico .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+function renderList(){
+  const list=document.getElementById('event-list');
+  let filtered=events;
+  if(currentFilter==='profit') filtered=events.filter(e=>e.profitto>=0);
+  if(currentFilter==='loss')   filtered=events.filter(e=>e.profitto<0);
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-state"><div class="icon">🍽️</div><p>Nessuna serata ancora.</p></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(e=>{
+    const gnames=(e.guestIds||[]).map(gid=>{const c=contacts.find(x=>x.id===gid);return c?c.nome:'';}).filter(Boolean).join(', ');
+    return `<div class="event-card" onclick="openDetail(${e.id})">
+      <div class="event-top">
+        <div>
+          <div class="event-name">${esc(e.nome)}</div>
+          <div class="event-date">${formatDate(e.data)}${e.coperti?' · '+e.coperti+' ospiti':''}</div>
+          ${gnames?`<div style="font-size:11px;color:var(--muted);margin-top:3px">👥 ${esc(gnames)}</div>`:''}
+        </div>
+        <div>
+          <div class="event-profit ${e.profitto>=0?'pos':'neg'}">${aed(e.profitto)}</div>
+          <div class="badge ${e.profitto>=0?'pos':'neg'}" style="float:right">${e.margine}%</div>
+          ${e.cpp?`<div style="font-size:10px;color:var(--muted);text-align:right;margin-top:4px">${aed(e.cpp)}/ospite</div>`:''}
+        </div>
+      </div>
+      <div class="event-details">
+        <div class="event-detail"><div class="event-detail-label">Ricavi</div><div class="event-detail-value" style="color:var(--accent)">${aed(e.ricavi.totale)}</div></div>
+        <div class="event-detail"><div class="event-detail-label">Costi</div><div class="event-detail-value">${aed(e.costi.totale)}</div></div>
+        <div class="event-detail"><div class="event-detail-label">Profitto</div><div class="event-detail-value" style="color:${e.profitto>=0?'var(--green)':'var(--red)'}">${aed(e.profitto)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// DETAIL MODAL
+// ═══════════════════════════════════════════════
+function openDetail(id){
+  const e=events.find(x=>x.id===id); if(!e) return;
+  const ingrRows=(e.costi.ingredienti||[]).map(i=>`<div class="modal-row"><span class="label">${esc(i.cat||'')} ${esc(i.name)}</span><span>${aed(i.amount)}</span></div>`).join('');
+  const guestList=(e.guestIds||[]).map(gid=>{
+    const c=contacts.find(x=>x.id===gid); if(!c) return '';
+    const handles=(c.platforms||[]).map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?pl.icon+' '+(pl.prefix||'')+p.handle:'';}).filter(Boolean).join(' ');
+    const rest=(c.restrizioni||[]).join(', ');
+    return `<div class="modal-row"><span class="label">${esc(c.nome)}${c.vip?' ⭐':''}</span><span style="text-align:right;font-size:12px">${esc(handles)}<br>${rest?'<span style="color:var(--red)">'+esc(rest)+'</span>':''}</span></div>`;
+  }).filter(Boolean).join('');
+  document.getElementById('modal-body').innerHTML=`
+    <div class="modal-title">${esc(e.nome)}</div>
+    <div class="modal-sub">${formatDate(e.data)}${e.coperti?' · '+e.coperti+' ospiti':''}${e.cpp?' · AED '+e.cpp+'/ospite':''}</div>
+    ${guestList?`<div class="modal-section"><div class="modal-section-title">👥 Ospiti</div>${guestList}</div>`:''}
+    <div class="modal-section"><div class="modal-section-title">💰 Ricavi</div>
+      ${e.ricavi.biglietto?`<div class="modal-row"><span class="label">Quota × ${e.coperti||1}</span><span>${aed(e.ricavi.biglietto)}</span></div>`:''}
+      ${e.ricavi.bevande?`<div class="modal-row"><span class="label">Bevande</span><span>${aed(e.ricavi.bevande)}</span></div>`:''}
+      ${e.ricavi.altriR?`<div class="modal-row"><span class="label">Altri</span><span>${aed(e.ricavi.altriR)}</span></div>`:''}
+      <div class="modal-total"><span>Totale Ricavi</span><span style="color:var(--accent)">${aed(e.ricavi.totale)}</span></div>
+    </div>
+    <div class="modal-section"><div class="modal-section-title">🧾 Ingredienti</div>
+      ${ingrRows||'<div class="modal-row"><span class="label">–</span><span>AED 0</span></div>'}
+    </div>
+    <div class="modal-section"><div class="modal-section-title">👤 Altri Costi</div>
+      ${e.costi.staff?`<div class="modal-row"><span class="label">Staff</span><span>${aed(e.costi.staff)}</span></div>`:''}
+      ${e.costi.affitto?`<div class="modal-row"><span class="label">Venue</span><span>${aed(e.costi.affitto)}</span></div>`:''}
+      ${e.costi.altriC?`<div class="modal-row"><span class="label">Altri</span><span>${aed(e.costi.altriC)}</span></div>`:''}
+      <div class="modal-total"><span>Totale Costi</span><span>${aed(e.costi.totale)}</span></div>
+    </div>
+    <div style="border-top:2px solid var(--border);padding-top:16px">
+      <div class="modal-total"><span>🏁 Profitto</span><span style="color:${e.profitto>=0?'var(--green)':'var(--red)'};font-size:22px">${aed(e.profitto)}</span></div>
+      <div style="text-align:right"><span class="badge ${e.profitto>=0?'pos':'neg'}">Margine ${e.margine}%</span></div>
+    </div>
+    <button class="btn-delete" onclick="deleteEvent(${e.id})">🗑 Elimina</button>
+    <button class="btn-close" onclick="closeModal()">Chiudi</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(ev){ if(!ev||ev.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); }
+function deleteEvent(id){
+  if(!confirm('Eliminare questa serata?')) return;
+  events=events.filter(e=>e.id!==id); save(K.events,events);
+  document.getElementById('modal').classList.remove('open');
+  renderList();
+}
+
+// ═══════════════════════════════════════════════
+// CALENDARIO
+// ═══════════════════════════════════════════════
+let calYear  = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function calNav(dir){ calMonth+=dir; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+
+function renderCalendar(){
+  const mesi=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  document.getElementById('cal-month-label').textContent = mesi[calMonth]+' '+calYear;
+
+  const grid = document.getElementById('cal-grid');
+  const dows = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  let html = dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  const firstDay = new Date(calYear,calMonth,1).getDay();
+  const offset   = (firstDay+6)%7; // Mon=0
+  const daysInMonth = new Date(calYear,calMonth+1,0).getDate();
+  const today = todayStr();
+
+  for(let i=0;i<offset;i++) html+=`<div class="cal-day empty"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const slot    = slots.find(s=>s.date===dateStr);
+    const event   = events.find(e=>e.data===dateStr);
+    const isPast  = dateStr<today;
+    let cls='cal-day';
+    if(dateStr===today) cls+=' today';
+    if(event)           cls+=' event-day';
+    else if(slot?.status==='open')    cls+=' open';
+    else if(slot?.status==='soldout') cls+=' soldout';
+    if(isPast&&!event)  cls+=' past';
+    const gCount = slot?(slot.guestIds||[]).length:event?(event.guestIds||[]).length:0;
+    html+=`<div class="${cls}" onclick="calDayTap('${dateStr}')">
+      <div class="day-num">${d}</div>
+      ${gCount?`<div class="guest-count">${gCount}</div>`:''}
+      <div class="day-dot"></div>
+    </div>`;
+  }
+  grid.innerHTML=html;
+  renderSlotsList();
+}
+
+function calDayTap(dateStr){
+  const slot=slots.find(s=>s.date===dateStr);
+  const event=events.find(e=>e.data===dateStr);
+  if(event){ openDetail(event.id); return; }
+  openSlotEditor(dateStr, slot||null);
+}
+
+function renderSlotsList(){
+  const list = document.getElementById('cal-slots-list');
+  const monthSlots = [...slots,...events.map(e=>({date:e.data,status:'event',eventId:e.id,guestIds:e.guestIds||[]}))]
+    .filter(s=>s.date.startsWith(`${calYear}-${String(calMonth+1).padStart(2,'0')}`))
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(!monthSlots.length){
+    list.innerHTML=`<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Nessuna data questo mese</div>`;
+    return;
+  }
+  list.innerHTML=monthSlots.map(s=>{
+    const gNames=(s.guestIds||[]).map(gid=>{const c=contacts.find(x=>x.id===gid);return c?c.nome:'';}).filter(Boolean);
+    const gChips=gNames.map(n=>{
+      const c=contacts.find(x=>x.nome===n);
+      const rest=(c&&c.restrizioni&&c.restrizioni.length)?'🚫':'';
+      return `<span class="guest-chip">${rest} ${esc(n)}</span>`;
+    }).join('');
+    let statusLabel='', statusCls='';
+    if(s.status==='event'){   statusLabel='Serata';   statusCls='status-event'; }
+    else if(s.status==='open'){    statusLabel='Aperta';   statusCls='status-open'; }
+    else if(s.status==='soldout'){ statusLabel='Sold Out'; statusCls='status-soldout'; }
+    else { statusLabel='Chiusa'; statusCls=''; }
+    return `<div class="booking-slot ${s.status}" onclick="${s.eventId?'openDetail('+s.eventId+')':'openSlotEditor(\''+s.date+'\',null)'}">
+      <div class="booking-slot-top">
+        <div class="booking-slot-date">${formatDate(s.date)}</div>
+        <span class="booking-slot-status ${statusCls}">${statusLabel}</span>
+      </div>
+      ${gChips?`<div class="booking-guests">${gChips}</div>`:''}
+      ${s.note?`<div style="font-size:12px;color:var(--muted);margin-top:6px">${esc(s.note)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openAddSlot(){ openSlotEditor(todayStr(),null); }
+
+function openSlotEditor(dateStr, existing){
+  const mb = document.getElementById('slot-modal-body');
+  const statuses=['open','soldout','closed'];
+  const cur = existing?.status||'open';
+  // Guest selector for slots
+  const guestOpts = contacts.map(c=>{
+    const sel=(existing?.guestIds||[]).includes(c.id);
+    return `<div class="guest-option ${sel?'selected':''}" id="sg-${c.id}" onclick="toggleSlotGuest(${c.id})">
+      <div class="guest-option-avatar">${initials(c.nome)}</div>
+      <div class="guest-option-info">
+        <div class="guest-option-name">${esc(c.nome)}${c.vip?' ⭐':''}</div>
+        <div class="guest-option-sub">${(c.restrizioni||[]).join(', ')||'–'}</div>
+      </div>
+      <span class="guest-check">✓</span>
+    </div>`;
+  }).join('');
+  mb.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${formatDate(dateStr)||dateStr}</div>
+    <div class="modal-sub">Gestisci disponibilità</div>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input class="form-input" id="slot-date" type="date" value="${dateStr}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Stato</label>
+      <select class="form-select" id="slot-status">
+        <option value="open" ${cur==='open'?'selected':''}>🟢 Aperta — accetto prenotazioni</option>
+        <option value="soldout" ${cur==='soldout'?'selected':''}>🔴 Sold Out — completa</option>
+        <option value="closed" ${cur==='closed'?'selected':''}>⚫ Chiusa — non disponibile</option>
+      </select>
+    </div>
+    ${contacts.length?`<div class="form-group">
+      <label class="form-label">Ospiti Confermati (max 8)</label>
+      <div id="slot-guest-selector">${guestOpts||'<div style="color:var(--muted);font-size:13px">Nessun contatto in rubrica.</div>'}</div>
+    </div>`:''}
+    <div class="form-group">
+      <label class="form-label">Note</label>
+      <input class="form-input" id="slot-note" placeholder="es. Menu: pesce — tema 80s" value="${esc(existing?.note||'')}">
+    </div>
+    <button class="btn-primary" onclick="saveSlot('${dateStr}', ${existing?'true':'false'})">✓ Salva</button>
+    ${existing?`<button class="btn-delete" onclick="deleteSlot('${dateStr}')">🗑 Rimuovi data</button>`:''}
+    <button class="btn-close" onclick="closeSlotModal()">Annulla</button>`;
+  document.getElementById('slot-modal').classList.add('open');
+}
+
+let slotSelectedGuests = new Set();
+function toggleSlotGuest(id){
+  const el=document.getElementById('sg-'+id);
+  if(!el) return;
+  if(slotSelectedGuests.has(id)){ slotSelectedGuests.delete(id); el.classList.remove('selected'); }
+  else { if(slotSelectedGuests.size>=8){alert('Massimo 8 ospiti.');return;} slotSelectedGuests.add(id); el.classList.add('selected'); }
+}
+
+function saveSlot(origDate, isEdit){
+  const date=document.getElementById('slot-date').value;
+  const status=document.getElementById('slot-status').value;
+  const note=(document.getElementById('slot-note')||{}).value||'';
+  // collect selected guests from dom
+  const guestIds=[...document.querySelectorAll('#slot-guest-selector .guest-option.selected')]
+    .map(el=>parseInt(el.id.replace('sg-',''))).filter(Boolean);
+  if(!date){alert('Inserisci una data');return;}
+  if(isEdit){ slots=slots.filter(s=>s.date!==origDate); }
+  slots.push({id:Date.now(),date,status,guestIds,note});
+  save(K.slots,slots);
+  closeSlotModal();
+  renderCalendar();
+}
+function deleteSlot(dateStr){
+  if(!confirm('Rimuovere questa data?')) return;
+  slots=slots.filter(s=>s.date!==dateStr);
+  save(K.slots,slots);
+  closeSlotModal();
+  renderCalendar();
+}
+function closeSlotModal(ev){
+  if(!ev||ev.target===document.getElementById('slot-modal')){ document.getElementById('slot-modal').classList.remove('open'); slotSelectedGuests=new Set(); }
+}
+
+// ═══════════════════════════════════════════════
+// CONTATTI
+// ═══════════════════════════════════════════════
+let contactFilter='all';
+let formPlatforms=[];
+let editingContactId=null;
+function setContactFilter(f,btn){
+  contactFilter=f;
+  document.querySelectorAll('#page-contatti .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderContacts();
+}
+function renderContacts(){
+  const list=document.getElementById('contact-list');
+  const q=(document.getElementById('contact-search').value||'').toLowerCase();
+  let filtered=contacts.filter(c=>{
+    if(q){ const h=(c.platforms||[]).map(p=>p.handle).join(' ').toLowerCase(); if(!c.nome.toLowerCase().includes(q)&&!h.includes(q)) return false; }
+    if(contactFilter==='vip')         return c.vip;
+    if(contactFilter==='restriction') return (c.restrizioni||[]).length>0;
+    if(contactFilter==='ig')          return (c.platforms||[]).some(p=>p.platform==='instagram');
+    return true;
+  });
+  if(!filtered.length){
+    list.innerHTML=`<div class="empty-state"><div class="icon">👥</div><p>Nessun ospite trovato.</p></div>`; return;
+  }
+  list.innerHTML=filtered.map(c=>{
+    const handles=(c.platforms||[]).map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?pl.icon+' '+(pl.prefix||'')+p.handle:'';}).filter(Boolean).join(' · ');
+    const restTags=(c.restrizioni||[]).map(r=>`<span class="tag tag-restriction">${r}</span>`).join('');
+    const ptTags=(c.platforms||[]).map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?`<span class="tag tag-platform">${pl.icon}</span>`:'';}).join('');
+    const evCount=events.filter(e=>(e.guestIds||[]).includes(c.id)).length;
+    return `<div class="contact-card" onclick="openContactDetail(${c.id})">
+      <div class="contact-avatar">${initials(c.nome)}</div>
+      <div class="contact-info">
+        <div class="contact-name">${esc(c.nome)}${c.vip?' ⭐':''}</div>
+        <div class="contact-handle">${handles||'–'}</div>
+        <div class="contact-tags">${ptTags}${restTags}${evCount?`<span class="tag tag-event">${evCount} serate</span>`:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openNewContact(){ editingContactId=null; formPlatforms=[{id:Date.now(),platform:'instagram',handle:''}]; openContactForm({}); }
+function openContactForm(c){
+  const mb=document.getElementById('contact-modal-body');
+  const restChecks=RESTRICTIONS.map(r=>`<label style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">
+    <input type="checkbox" id="rest-${r.replace(/\s/g,'_')}" value="${r}" ${(c.restrizioni||[]).includes(r)?'checked':''}
+           style="width:18px;height:18px;accent-color:var(--accent)"><span>${r}</span></label>`).join('');
+  mb.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${editingContactId?'Modifica':'Nuovo'} Ospite</div>
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label">Nome *</label>
+      <input class="form-input" id="cf-nome" placeholder="Nome Cognome" value="${esc(c.nome||'')}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telefono</label>
+      <input class="form-input" id="cf-tel" placeholder="+971 …" type="tel" value="${esc(c.telefono||'')}">
+    </div>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;cursor:pointer">
+      <input type="checkbox" id="cf-vip" ${c.vip?'checked':''} style="width:20px;height:20px;accent-color:var(--accent)">
+      <span style="font-weight:600">⭐ Ospite VIP</span>
+    </label>
+    <div class="section-label">🌐 Piattaforme</div>
+    <div id="platform-list"></div>
+    <button class="add-btn" onclick="addPlatform()">+ Aggiungi piattaforma</button>
+    <div class="section-label">🚫 Restrizioni</div>
+    ${restChecks}
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label">Note</label>
+      <textarea class="form-textarea" id="cf-note" placeholder="Note libere…">${esc(c.note||'')}</textarea>
+    </div>
+    <button class="btn-primary" onclick="saveContact()">✓ Salva</button>
+    ${editingContactId?`<button class="btn-delete" onclick="deleteContact(${editingContactId})">🗑 Elimina</button>`:''}
+    <button class="btn-close" onclick="closeContactModal()">Annulla</button>`;
+  renderPlatformList();
+  document.getElementById('contact-modal').classList.add('open');
+}
+function renderPlatformList(){
+  document.getElementById('platform-list').innerHTML=formPlatforms.map(p=>`
+    <div class="cost-item">
+      <select class="form-select" style="flex:0 0 125px" onchange="updatePlatform(${p.id},'platform',this.value)">
+        ${PLATFORMS.map(pl=>`<option value="${pl.id}" ${p.platform===pl.id?'selected':''}>${pl.icon} ${pl.label}</option>`).join('')}
+      </select>
+      <input class="form-input" placeholder="Username / handle" value="${esc(p.handle)}" oninput="updatePlatform(${p.id},'handle',this.value)">
+      <button class="remove-btn" onclick="removePlatform(${p.id})">×</button>
+    </div>`).join('');
+}
+function addPlatform(){ formPlatforms.push({id:Date.now(),platform:'instagram',handle:''}); renderPlatformList(); }
+function removePlatform(id){ formPlatforms=formPlatforms.filter(p=>p.id!==id); renderPlatformList(); }
+function updatePlatform(id,field,val){ const p=formPlatforms.find(x=>x.id===id); if(p) p[field]=val; }
+function saveContact(){
+  const nome=document.getElementById('cf-nome').value.trim();
+  if(!nome){alert('Inserisci il nome');return;}
+  const restrizioni=RESTRICTIONS.filter(r=>{const el=document.getElementById('rest-'+r.replace(/\s/g,'_'));return el&&el.checked;});
+  const contact={
+    id:editingContactId||Date.now(), nome,
+    telefono:document.getElementById('cf-tel').value.trim(),
+    vip:document.getElementById('cf-vip').checked,
+    platforms:formPlatforms.filter(p=>p.handle.trim()).map(p=>({platform:p.platform,handle:p.handle.trim()})),
+    restrizioni, note:document.getElementById('cf-note').value.trim(),
+    createdAt:editingContactId?(contacts.find(x=>x.id===editingContactId)||{}).createdAt||Date.now():Date.now()
+  };
+  contacts=editingContactId?contacts.map(c=>c.id===editingContactId?contact:c):[contact,...contacts];
+  save(K.contacts,contacts);
+  closeContactModal(); renderContacts();
+}
+function deleteContact(id){
+  if(!confirm('Eliminare questo ospite?')) return;
+  contacts=contacts.filter(c=>c.id!==id); save(K.contacts,contacts);
+  closeContactModal(); renderContacts();
+}
+function openContactDetail(id){
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  const handles=(c.platforms||[]).map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?`<div class="modal-row"><span class="label">${pl.icon} ${pl.label}</span><span style="color:var(--blue)">${pl.prefix||''}${esc(p.handle)}</span></div>`:''}).join('');
+  const restItems=(c.restrizioni||[]).map(r=>`<div class="modal-row"><span style="color:var(--red)">🚫 ${r}</span></div>`).join('');
+  const evHistory=events.filter(e=>(e.guestIds||[]).includes(c.id)).sort((a,b)=>b.data.localeCompare(a.data));
+  const evRows=evHistory.map(e=>`<div class="modal-row"><span class="label">${esc(e.nome)}</span><span style="font-size:12px">${formatDate(e.data)}<br><span style="color:${e.profitto>=0?'var(--green)':'var(--red)'}">${aed(e.profitto)}</span></span></div>`).join('');
+  const mb=document.getElementById('contact-modal-body');
+  mb.innerHTML=`
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+      <div class="contact-avatar" style="width:58px;height:58px;font-size:20px">${initials(c.nome)}</div>
+      <div>
+        <div class="modal-title" style="margin-bottom:2px">${esc(c.nome)}${c.vip?' ⭐':''}</div>
+        ${c.telefono?`<div style="color:var(--muted);font-size:13px">📞 ${esc(c.telefono)}</div>`:''}
+        <div style="color:var(--muted);font-size:12px;margin-top:2px">${evHistory.length} ${evHistory.length===1?'serata':'serate'}</div>
+      </div>
+    </div>
+    ${handles?`<div class="modal-section"><div class="modal-section-title">🌐 Piattaforme</div>${handles}</div>`:''}
+    ${restItems?`<div class="modal-section"><div class="modal-section-title">🚫 Restrizioni</div>${restItems}</div>`:''}
+    ${c.note?`<div class="modal-section"><div class="modal-section-title">📝 Note</div><div style="font-size:14px;color:var(--muted);line-height:1.5">${esc(c.note)}</div></div>`:''}
+    ${evRows?`<div class="modal-section"><div class="modal-section-title">📋 Storico</div>${evRows}</div>`:''}
+    <button class="btn-secondary" onclick="openEditContact(${c.id})">✏️ Modifica</button>
+    <button class="btn-close" onclick="closeContactModal()">Chiudi</button>`;
+  document.getElementById('contact-modal').classList.add('open');
+}
+function openEditContact(id){
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  editingContactId=id;
+  formPlatforms=(c.platforms||[]).map(p=>({id:Date.now()+Math.random(),platform:p.platform,handle:p.handle}));
+  if(!formPlatforms.length) formPlatforms=[{id:Date.now(),platform:'instagram',handle:''}];
+  openContactForm(c);
+}
+function closeContactModal(ev){
+  if(!ev||ev.target===document.getElementById('contact-modal')){ document.getElementById('contact-modal').classList.remove('open'); editingContactId=null; }
+}
+
+// ═══════════════════════════════════════════════
+// AI CHAT
+// ═══════════════════════════════════════════════
+const PAGE_IDX_NEW = {dashboard:0,calendario:1,nuova:2,storico:3,contatti:4,ai:5};
+const _origShowPage = showPage;
+// override showPage to handle ai tab
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab')[PAGE_IDX_NEW[name]].classList.add('active');
+  if(name==='dashboard')  renderDashboard();
+  if(name==='calendario') renderCalendar();
+  if(name==='storico')    renderList();
+  if(name==='nuova')      { renderGuestSelector(); renderCosts(); }
+  if(name==='contatti')   renderContacts();
+  if(name==='ai')         { initChat(); scrollChatBottom(); }
+}
+
+let chatHistory = []; // [{role,content}] for OpenAI
+let chatPendingImage = null; // base64 image waiting to be sent
+let chatInited = false;
+
+function buildSystemPrompt(){
+  const today = todayStr();
+  const evSummary = events.slice(0,20).map(e=>
+    `- ${e.nome} (${e.data}): ricavi AED ${e.ricavi.totale}, costi AED ${e.costi.totale}, profitto AED ${e.profitto}, ospiti: ${(e.guestIds||[]).map(g=>{const c=contacts.find(x=>x.id===g);return c?c.nome:'?';}).join(', ')||'nessuno'}`
+  ).join('\n');
+  const slotSummary = slots.filter(s=>s.date>=today).slice(0,10).map(s=>
+    `- ${s.date}: ${s.status} — ospiti: ${(s.guestIds||[]).map(g=>{const c=contacts.find(x=>x.id===g);return c?c.nome:'?';}).join(', ')||'nessuno'}`
+  ).join('\n');
+  const contactSummary = contacts.slice(0,30).map(c=>
+    `- ${c.nome}${c.vip?' (VIP)':''}: ${(c.platforms||[]).map(p=>p.platform+':'+p.handle).join(', ')||'nessun handle'} | restrizioni: ${(c.restrizioni||[]).join(', ')||'nessuna'}`
+  ).join('\n');
+  const totR=events.reduce((s,e)=>s+e.ricavi.totale,0);
+  const totC=events.reduce((s,e)=>s+e.costi.totale,0);
+
+  return `Sei l'assistente AI personale di un supper club privato a Dubai. Il tuo nome è "Chef AI". Rispondi SEMPRE in italiano, a meno che l'utente non scriva in inglese (in quel caso rispondi in inglese). Sei amichevole, conciso e pratico.
+
+DATI ATTUALI (oggi: ${today}):
+Serate totali: ${events.length} | Ricavi totali: AED ${totR} | Costi totali: AED ${totC} | Profitto: AED ${totR-totC}
+Ospiti in rubrica: ${contacts.length}
+Valuta: AED (Dirham UAE)
+
+ULTIME SERATE:
+${evSummary||'Nessuna serata ancora.'}
+
+DATE CALENDARIO FUTURE:
+${slotSummary||'Nessuna data aperta.'}
+
+OSPITI IN RUBRICA:
+${contactSummary||'Nessun ospite ancora.'}
+
+CAPACITÀ: Puoi rispondere a domande, analizzare immagini di scontrini o screenshot DM, e suggerire azioni. Quando rilevi che l'utente vuole:
+- Aggiungere un ospite → restituisci un JSON action con tipo "add_contact"
+- Aprire/chiudere una data → tipo "add_slot"
+- Aggiungere una serata → tipo "add_event"
+- Aggiornare info ospite → tipo "update_contact"
+
+Quando suggerisci un'azione, includi SEMPRE alla fine del messaggio un blocco JSON racchiuso tra |||ACTION_START||| e |||ACTION_END||| in questo formato:
+{"type":"add_contact","data":{"nome":"...","telefono":"...","instagram":"...","restrizioni":[],"note":"...","vip":false}}
+oppure
+{"type":"add_slot","data":{"date":"YYYY-MM-DD","status":"open","note":"..."}}
+oppure
+{"type":"update_contact","data":{"id":123,"field":"restrizioni","value":["Vegano"]}}
+
+Se non c'è nessuna azione da eseguire, non includere nessun JSON action.`;
+}
+
+function initChat(){
+  if(chatInited) return;
+  chatInited = true;
+  chatHistory = [];
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML='';
+  appendChatBubble('system','👋 Ciao! Sono <strong>Chef AI</strong>, il tuo assistente per il Supper Club Dubai.<br><br>Posso aiutarti a:<br>• Rispondere a domande su serate, ospiti, profitti<br>• Analizzare screenshot di DM Instagram/WhatsApp per aggiungere ospiti<br>• Gestire il calendario<br><br>Come posso aiutarti?');
+}
+
+function appendChatBubble(role, html, extra){
+  const msgs = document.getElementById('chat-messages');
+  if(!msgs) return;
+  const div = document.createElement('div');
+  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  if(role==='user'){
+    div.className='chat-bubble user';
+    div.innerHTML = html + `<div class="chat-time">${now}</div>`;
+  } else if(role==='ai'){
+    div.className='chat-bubble ai';
+    div.innerHTML = html + `<div class="chat-time">${now}</div>`;
+  } else if(role==='thinking'){
+    div.className='chat-bubble ai thinking';
+    div.id='chat-thinking';
+    div.innerHTML='<span style="animation:pulse 1s infinite">●</span> <span style="animation:pulse 1s infinite .2s">●</span> <span style="animation:pulse 1s infinite .4s">●</span>';
+  } else if(role==='system'){
+    div.className='chat-bubble system';
+    div.innerHTML = html;
+  } else if(role==='action'){
+    div.className='chat-bubble action';
+    div.innerHTML = html;
+  }
+  msgs.appendChild(div);
+  scrollChatBottom();
+  return div;
+}
+
+function scrollChatBottom(){
+  const msgs=document.getElementById('chat-messages');
+  if(msgs) setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,50);
+}
+
+function quickMsg(text){ document.getElementById('chat-input').value=text; sendChat(); }
+
+function triggerChatUpload(){ document.getElementById('chat-file-input').click(); }
+
+function handleChatUpload(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    chatPendingImage=ev.target.result;
+    const msgs=document.getElementById('chat-messages');
+    const div=document.createElement('div');
+    div.className='chat-bubble user';
+    div.innerHTML=`<img src="${chatPendingImage}" style="max-width:220px;border-radius:10px;display:block"><div class="chat-time">${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>`;
+    msgs.appendChild(div);
+    scrollChatBottom();
+    // auto-prompt
+    document.getElementById('chat-input').value='Analizza questa immagine';
+    document.getElementById('chat-input').focus();
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+async function sendChat(){
+  if(!settings.openaiKey){ alert('Configura la chiave OpenAI nelle ⚙️ Impostazioni.'); return; }
+  const inputEl=document.getElementById('chat-input');
+  const text=(inputEl.value||'').trim();
+  if(!text && !chatPendingImage) return;
+
+  // show user message
+  if(text) appendChatBubble('user', esc(text).replace(/\n/g,'<br>'));
+  inputEl.value=''; inputEl.style.height='auto';
+
+  // build message for openai
+  const userContent = [];
+  if(chatPendingImage){
+    userContent.push({type:'image_url',image_url:{url:chatPendingImage,detail:'high'}});
+    chatPendingImage=null;
+  }
+  if(text) userContent.push({type:'text',text});
+  if(!userContent.length) return;
+
+  chatHistory.push({role:'user', content: userContent.length===1&&userContent[0].type==='text' ? text : userContent});
+
+  // thinking bubble
+  appendChatBubble('thinking','');
+
+  try {
+    const messages = [
+      {role:'system', content: buildSystemPrompt()},
+      ...chatHistory.slice(-12) // keep last 12 for context
+    ];
+    const resp = await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.openaiKey},
+      body:JSON.stringify({model:'gpt-4o',messages,max_tokens:1000,temperature:0.7})
+    });
+    const data=await resp.json();
+    document.getElementById('chat-thinking')?.remove();
+    if(!resp.ok) throw new Error(data.error?.message||'Errore API');
+
+    const rawReply=data.choices[0].message.content||'';
+    chatHistory.push({role:'assistant',content:rawReply});
+
+    // parse action if present
+    const actionMatch=rawReply.match(/\|\|\|ACTION_START\|\|\|([\s\S]*?)\|\|\|ACTION_END\|\|\|/);
+    const cleanReply=rawReply.replace(/\|\|\|ACTION_START\|\|\|[\s\S]*?\|\|\|ACTION_END\|\|\|/g,'').trim();
+
+    // render AI text
+    const htmlReply=cleanReply.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    appendChatBubble('ai', htmlReply);
+
+    // handle action
+    if(actionMatch){
+      try {
+        const action=JSON.parse(actionMatch[1].trim());
+        renderActionCard(action);
+      } catch(e){ console.warn('action parse error',e); }
+    }
+
+  } catch(e){
+    document.getElementById('chat-thinking')?.remove();
+    appendChatBubble('ai',`❌ Errore: ${esc(e.message)}`);
+  }
+}
+
+function renderActionCard(action){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='chat-bubble action';
+
+  if(action.type==='add_contact'){
+    const d=action.data||{};
+    const platforms=[];
+    if(d.instagram) platforms.push({platform:'instagram',handle:d.instagram.replace('@','')});
+    if(d.tiktok)    platforms.push({platform:'tiktok',handle:d.tiktok.replace('@','')});
+    if(d.whatsapp)  platforms.push({platform:'whatsapp',handle:d.whatsapp});
+    if(d.email)     platforms.push({platform:'email',handle:d.email});
+    const contact={id:Date.now(),nome:d.nome||'Nuovo Ospite',telefono:d.telefono||'',vip:d.vip||false,platforms,restrizioni:d.restrizioni||[],note:d.note||'',createdAt:Date.now()};
+    div.innerHTML=`<div class="action-card">
+      <div class="action-card-title">➕ Nuovo ospite rilevato</div>
+      <div style="font-size:13px"><b>${esc(contact.nome)}</b>${contact.telefono?' · 📞 '+esc(contact.telefono):''}<br>
+      ${platforms.map(p=>{const pl=PLATFORMS.find(x=>x.id===p.platform);return pl?pl.icon+' '+(pl.prefix||'')+esc(p.handle):'';}).join(' · ')||'–'}<br>
+      ${contact.restrizioni.length?'🚫 '+contact.restrizioni.join(', '):''}</div>
+      <div class="action-btn-row">
+        <button class="action-confirm-btn" onclick="confirmAddContact(this,${JSON.stringify(contact).replace(/"/g,'&quot;')})">✓ Aggiungi</button>
+        <button class="action-deny-btn" onclick="this.closest('.chat-bubble').remove()">✗ Ignora</button>
+      </div>
+    </div>`;
+
+  } else if(action.type==='add_slot'){
+    const d=action.data||{};
+    div.innerHTML=`<div class="action-card">
+      <div class="action-card-title">📅 Nuova data nel calendario</div>
+      <div style="font-size:13px"><b>${formatDate(d.date)}</b> — ${d.status==='open'?'🟢 Aperta':'🔴 Chiusa'}${d.note?'<br>'+esc(d.note):''}</div>
+      <div class="action-btn-row">
+        <button class="action-confirm-btn" onclick="confirmAddSlot(this,'${d.date}','${d.status}','${(d.note||'').replace(/'/g,'')}')">✓ Aggiungi</button>
+        <button class="action-deny-btn" onclick="this.closest('.chat-bubble').remove()">✗ Ignora</button>
+      </div>
+    </div>`;
+
+  } else if(action.type==='update_contact'){
+    const d=action.data||{};
+    const c=contacts.find(x=>x.id===d.id);
+    if(!c) return;
+    div.innerHTML=`<div class="action-card">
+      <div class="action-card-title">✏️ Aggiorna ospite</div>
+      <div style="font-size:13px">Aggiorna <b>${esc(c.nome)}</b>: ${esc(d.field)} → ${Array.isArray(d.value)?d.value.join(', '):esc(String(d.value))}</div>
+      <div class="action-btn-row">
+        <button class="action-confirm-btn" onclick="confirmUpdateContact(this,${d.id},'${d.field}',${JSON.stringify(d.value).replace(/"/g,'&quot;')})">✓ Aggiorna</button>
+        <button class="action-deny-btn" onclick="this.closest('.chat-bubble').remove()">✗ Ignora</button>
+      </div>
+    </div>`;
+  }
+
+  msgs.appendChild(div);
+  scrollChatBottom();
+}
+
+function confirmAddContact(btn, contact){
+  contacts.unshift(contact);
+  save(K.contacts,contacts);
+  const card=btn.closest('.action-card');
+  card.innerHTML=`<span style="color:var(--green)">✅ Ospite <b>${esc(contact.nome)}</b> aggiunto alla rubrica!</span>`;
+  appendChatBubble('system',`✅ <b>${esc(contact.nome)}</b> aggiunto agli ospiti.`);
+  chatHistory.push({role:'user',content:`Ho confermato l'aggiunta di ${contact.nome} alla rubrica.`});
+}
+
+function confirmAddSlot(btn, date, status, note){
+  slots=slots.filter(s=>s.date!==date);
+  slots.push({id:Date.now(),date,status,guestIds:[],note});
+  save(K.slots,slots);
+  const card=btn.closest('.action-card');
+  card.innerHTML=`<span style="color:var(--green)">✅ Data <b>${formatDate(date)}</b> aggiunta al calendario!</span>`;
+  appendChatBubble('system',`✅ ${formatDate(date)} aggiunta come ${status==='open'?'aperta':'chiusa'}.`);
+}
+
+function confirmUpdateContact(btn, id, field, value){
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  c[field]=value;
+  save(K.contacts,contacts);
+  const card=btn.closest('.action-card');
+  card.innerHTML=`<span style="color:var(--green)">✅ Ospite aggiornato!</span>`;
+  appendChatBubble('system',`✅ Profilo aggiornato.`);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.getElementById('f-data').value = todayStr();
+addCost();
+calcPreview();
+renderDashboard();
+renderList();
+renderContacts();
+updateAiBadge();
+</script>
+</body>
+</html>
