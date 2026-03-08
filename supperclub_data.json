@@ -25,7 +25,7 @@
       "costi": {
         "totale": 0
       },
-      "savedAt": "2026-03-08T12:30:32.228Z"
+      "savedAt": "2026-03-08T12:31:06.246Z"
     }
   ],
   "guests": [
@@ -37,6 +37,15 @@
       "restrictions": "",
       "notes": "",
       "addedAt": "2026-03-08T12:29:36.929Z"
+    },
+    {
+      "id": "mmhqf64y1mx",
+      "name": "Maria Tinel",
+      "phone": "+971581754187",
+      "instagram": "",
+      "restrictions": "",
+      "notes": "",
+      "addedAt": "2026-03-08T12:32:04.306Z"
     }
   ],
   "slots": [
@@ -49,5 +58,5 @@
     }
   ],
   "sharedCosts": [],
-  "savedAt": "2026-03-08T12:30:47.398Z"
+  "savedAt": "2026-03-08T12:32:23.685Z"
 }
